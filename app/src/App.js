@@ -16,15 +16,12 @@ function App() {
       .then((fetchedData) => {
         setCsvData(fetchedData);
         setOptions(Object.keys(fetchedData[0]));
+        setSelectedTarget(Object.keys(fetchedData[0])[0]);
       })
       .catch((error) => {
         console.error("Error loading the csv file at path");
       });
   }, []);
-
-  useEffect(() => {
-    console.log(options)
-  }, [csvData])
 
   const onOptionChange = (e) => {
     setSelectedTarget(e.target.value);
