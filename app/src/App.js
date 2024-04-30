@@ -31,14 +31,14 @@ function App() {
     <div className='container'>
       <div className='target-selector'>
         <p>Select target: </p>
-         <select onChange={onOptionChange}>
+        <select onChange={onOptionChange}>
           {options.map((option, index) => (
             <option value={option} key={index}>{option}</option>
           ))}
-         </select>
+        </select>
       </div>
       <div className='bar-chart'>
-        <BarChart data={csvData} selectedTarget={selectedTarget} />
+        <BarChart data={csvData} selectedTarget={selectedTarget} /> {/* Updated BarChart component */}
       </div>
       <div className='correlation-matrix'>
         <CorrelationMatrix data={csvData} selectedTarget={selectedTarget} />
