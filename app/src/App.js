@@ -4,6 +4,7 @@ import data from './data/tips.csv';
 import ScatterPlot from './ScatterPlot';
 import BarChart from './BarChart';
 import CorrelationMatrix from './CorrelationMatrix';
+import './App.css';
 
 function App() {
   const [csvData, setCsvData] = useState([]);
