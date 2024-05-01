@@ -54,8 +54,3 @@ body {
     display: flex;
     flex-direction: row;
   }
-
-  .correlation-matrix{
-    margin-top: 40px; 
-    
-  }
