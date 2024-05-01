@@ -1,53 +1,110 @@
-import React, { useEffect, useState } from 'react';
-import './App.css';
+import React, { useState } from 'react';
 import * as d3 from 'd3';
-import data from './data/tips.csv';
-import ScatterPlot from './ScatterPlot';
-import BarChart from './BarChart';
-import CorrelationMatrix from './CorrelationMatrix';
 
-function App() {
-  const [csvData, setCsvData] = useState([]);
-  const [selectedTarget, setSelectedTarget] = useState("");
-  const [options, setOptions] = useState([]);
+function BarChart(props) {
+    const { data, selectedTarget } = props;
+    const [selectedCategory, setSelectedCategory] = useState("day");
 
-  useEffect(() => {
-    d3.csv(data)
-      .then((fetchedData) => {
-        setCsvData(fetchedData);
-        setOptions(Object.keys(fetchedData[0]));
-        setSelectedTarget(Object.keys(fetchedData[0])[0]);
-      })
-      .catch((error) => {
-        console.error("Error loading the csv file at path");
-      });
-  }, []);
+    const filteredData = data.filter(d => d[selectedTarget]);
+    const groupedData = d3.group(filteredData, d => d[selectedCategory]);
 
-  const onOptionChange = (e) => {
-    setSelectedTarget(e.target.value);
-  }
+    const averages = Array.from(groupedData, ([key, value]) => {
+        const total = d3.sum(value, d => parseFloat(d[selectedTarget]));
+        const average = total / value.length;
+        return { category: key, average };
+    });
 
-  return (
-    <div className='container'>
-      <div className='target-selector'>
-        <p>Select target: </p>
-        <select onChange={onOptionChange}>
-          {options.map((option, index) => (
-            <option value={option} key={index}>{option}</option>
-          ))}
-        </select>
-      </div>
-      <div className='bar-chart'>
-        <BarChart data={csvData} selectedTarget={selectedTarget} /> {/* Updated BarChart component */}
-      </div>
-      <div className='correlation-matrix'>
-        <CorrelationMatrix data={csvData} selectedTarget={selectedTarget} />
-      </div>
-      <div className='scatter-plot'>
-        <ScatterPlot data={csvData} selectedTarget={selectedTarget} />
-      </div>
-    </div>
-  );
+    const yScale = d3.scaleLinear()
+        .domain([0, Math.ceil(d3.max(averages, d => d.average) / 5) * 5])
+        .range([300, 0]);
+
+    const xScale = d3.scaleBand()
+        .domain(averages.map(d => d.category))
+        .range([60, 360])
+        .padding(0.1);
+
+    const handleCategoryChange = (e) => {
+        setSelectedCategory(e.target.value);
+    };
+
+    return (
+        <div className="bar-chart-container">
+            <svg width={400} height={400}>
+                <g transform={`translate(0, 300)`}>
+                    {xScale.domain().map((category, i) => (
+                        <g key={i} transform={`translate(${xScale(category) + xScale.bandwidth() / 2}, 0)`}>
+                            <text dy="1.25em" style={{ fontSize: '10px' }} textAnchor="middle">{category}</text>
+                        </g>
+                    ))}
+                </g>
+                <g transform={`translate(50, 0)`}>
+                    {yScale.ticks().map((tick, i) => (
+                        <g key={i} transform={`translate(0, ${yScale(tick)})`}>
+                            <line x2={350} stroke="#ccc" />
+                            <text dy="0.32em" style={{ fontSize: '10px' }} x="-9" y="0">{tick.toFixed(2)}</text>
+                        </g>
+                    ))}
+                </g>
+                {averages.map((d, i) => (
+                    <g key={i}>
+                        <rect
+                            x={xScale(d.category)}
+                            y={yScale(d.average)}
+                            width={xScale.bandwidth()}
+                            height={300 - yScale(d.average)}
+                            fill="steelblue"
+                        />
+                        <text
+                            x={xScale(d.category) + xScale.bandwidth() / 2}
+                            y={yScale(d.average) - 5} 
+                            fill="black"
+                            textAnchor="middle"
+                        >
+                            {d.average.toFixed(2)}
+                        </text>
+                    </g>
+                ))}
+            </svg>
+            <div className="radio-buttons">
+                <label>
+                    <input
+                        type="radio"
+                        value="sex"
+                        checked={selectedCategory === "sex"}
+                        onChange={handleCategoryChange}
+                    />
+                    Sex
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        value="smoker"
+                        checked={selectedCategory === "smoker"}
+                        onChange={handleCategoryChange}
+                    />
+                    Smoker
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        value="day"
+                        checked={selectedCategory === "day"}
+                        onChange={handleCategoryChange}
+                    />
+                    Day
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        value="time"
+                        checked={selectedCategory === "time"}
+                        onChange={handleCategoryChange}
+                    />
+                    Time
+                </label>
+            </div>
+        </div>
+    );
 }
 
-export default App;
+export default BarChart;
