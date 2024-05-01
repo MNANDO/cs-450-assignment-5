@@ -38,11 +38,14 @@ function App() {
           ))}
         </select>
       </div>
+      <div className='bar-chart-container correlation-matrix-container'>
       <div className='bar-chart'>
         <BarChart data={csvData} selectedTarget={selectedTarget} /> {/* Updated BarChart component */}
       </div>
       <div className='correlation-matrix'>
         <CorrelationMatrix data={csvData} selectedTarget={selectedTarget} />
+      </div>
+
       </div>
       <div className='scatter-plot'>
         <ScatterPlot data={csvData} selectedTarget={selectedTarget} />

@@ -12,15 +12,25 @@ body {
 
 }
 
+.bar-chart-container,
+.correlation-matrix-container {
+  display: flex; /* Use flexbox */
+  flex-direction: row; /* Align children in row */
+  justify-content: space-between; /* Add space between them */
+  margin-top: 40px; /* Move margin here */
+}
+
 .target-selector p {
     padding-right: 10px;
 }
 
 .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex; /* Update to flexbox */
+  flex-direction: column; /* Align children in column */
   }
 
 
